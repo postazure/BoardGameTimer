@@ -3,19 +3,24 @@
 
 int ledPin = 13;
 int sensorPin = A0;
+int maxLight = 0;
 
 RgbLed *rgb = new RgbLed(10, 9, 11);
 
-int totalPlayers = 4;
-float playerTimes[4] = {0, 0, 0, 0};
+//Todo: Create a wrapper around array to manage players.
+int playersCount = 4;
+Player *players[] = {
+  new Player(0,255,0), 
+  new Player(255,0,0),
+  new Player(0,0,255),
+  new Player(255,165,0)
+};
+
 int currentPlayer;
+int * currentPlayerColor;
 
 bool paused = true;
 bool timing = false;
-
-int maxLight = 0;
-
-int * currentPlayerColor;
 
 void setup() {
   Serial.begin(9600);
@@ -36,9 +41,11 @@ void loop() {
     if (!timing) {
       timingSeq();
     }
+    
   } else if (brightness > maxLight * 0.95) {
     //    faceup | pause
     pausedSeq();
+    
   } else if (!paused) {
     //    passing?
     passingSeq();
