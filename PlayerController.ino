@@ -3,6 +3,13 @@ int pc2[] = {255,0,0};
 int pc3[] = {0,0,255};
 int pc4[] = {255,165,0};
 
+Player *players[4] = {
+  new Player(0,255,0), 
+  new Player(255,0,0),
+  new Player(0,0,255),
+  new Player(255,165,0)
+};
+
 void setRandomStartPlayer(){
   randomSeed(getBrightness() + millis());
   currentPlayer = random(totalPlayers - 1);
@@ -10,23 +17,7 @@ void setRandomStartPlayer(){
 }
 
 int * getColorsForPlayer(int playerNum){
-  switch(playerNum){
-    case 0:
-      Serial.println("player 0 | Green");
-      return pc1;
-
-    case 1:
-      Serial.println("player 1 | Red");
-      return pc2;
-      
-    case 2:
-      Serial.println("player 2 | Blue");
-      return pc3;
-
-    case 3:
-      Serial.println("player 3 | Orange");
-      return pc4;
-  }
+  return players[playerNum] -> color;
 }
 
 void lightPlayerColor(int *pc){
