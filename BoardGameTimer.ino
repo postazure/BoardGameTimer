@@ -1,5 +1,5 @@
-#include "Player.h"
-#include "RgbLed.h"
+#include "lib/Player.h"
+#include "lib/RgbLed.h"
 
 int ledPin = 13;
 int sensorPin = A0;
