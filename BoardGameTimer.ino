@@ -11,9 +11,8 @@ int currentPlayer = 0;
 
 int resumeOnPlayer = currentPlayer;
 
-bool wasPassing = false;
-bool wasPaused = true;
-bool wasTiming = false;
+bool paused = true;
+bool timing = false;
 
 int lastPassingSensorValue = 1000;
 int maxLight = 0;
@@ -40,35 +39,23 @@ void setup() {
 void loop() {
   int brightness = getBrightness();
 
-// minLight ---timing---|----passing----|---paused---maxLight
+  // minLight ---timing---|----passing----|---paused---maxLight
 
   if (brightness < maxLight * 0.05) {
     //    facedown | players turn
-    timingSeq();
+    if (!timing) {
+      timingSeq();
+    }
+    
   } else if (brightness > maxLight * 0.95) {
     //    faceup | pause
     pausedSeq();
-  } else {
-     //    passing?
-   passingSeq();
+  } else if (!paused) {
+    //    passing?
+    passingSeq();
   }
-  
 
 
-
-  
-//  if (brightness > maxLight * 0.90) {
-//    //    faceup | pause
-//    pausedSeq();
-////  } else if (!wasPaused && brightness > maxLight * 0.15 && getBrightness() + maxLight * 0.05 > lastPassingSensorValue) {
-//  } else if (!wasPaused && brightness > maxLight * 0.30) {
-//    //    passing?
-//   passingSeq();
-//    
-//  } else if (!wasTiming && minLight - getBrightness() < maxLight * 0.15) {
-//    //    facedown | players turn
-//    timingSeq();
-//  }
 
   lastPassingSensorValue = getBrightness();
   Serial.print("current: ");
@@ -77,44 +64,32 @@ void loop() {
   Serial.println(maxLight);
 }
 
-void timingSeq(){
+void timingSeq() {
   Serial.print("Timing ");
-    
-    if (wasPassing) {
-      Serial.println("| New Player");
-      nextPlayer();
-      currentPlayerColor = getColorsForPlayer(currentPlayer);
-      lightPlayerColor(currentPlayerColor);
-      resumeOnPlayer = currentPlayer;
-    }
-
-    if (wasPaused) {
-      Serial.println("| Resume");
-//    resume timer  
-    }
    
-    wasPaused = false;
-    wasTiming = true; 
-    wasPassing = false;
+  if (!paused) {
+    Serial.println("| New Player");
+    nextPlayer(); 
+  }
+
+    //    resume timer
+  
+  currentPlayerColor = getColorsForPlayer(currentPlayer);
+  lightPlayerColor(currentPlayerColor);
+  paused = false;
+  timing = true;
 }
 
-void passingSeq(){
-  wasPassing = true;
-    wasPaused = false;
-    wasTiming = false;
-    
-    
-    rgbOff();
-    Serial.println("Passing");
+void passingSeq() {
+  rgbOff();
+  Serial.println("Passing");
+  timing = false;
 }
 
-void pausedSeq(){
+void pausedSeq() {
+  paused = true;
+  timing = false;
   Serial.println("Paused");
-    currentPlayer = resumeOnPlayer;
-    wasPaused = true;
-    wasPassing = false;
-    wasTiming = false;
-
-    flashPlayerColor(currentPlayerColor, 100);
+  flashPlayerColor(currentPlayerColor, 250);
 }
 
