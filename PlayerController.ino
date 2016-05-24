@@ -3,6 +3,11 @@ int pc2[] = {255,0,0};
 int pc3[] = {0,0,255};
 int pc4[] = {255,165,0};
 
+void setRandomStartPlayer(){
+  randomSeed(getBrightness() + millis());
+  currentPlayer = random(totalPlayers - 1);
+  currentPlayerColor = getColorsForPlayer(currentPlayer);
+}
 
 int * getColorsForPlayer(int playerNum){
   switch(playerNum){

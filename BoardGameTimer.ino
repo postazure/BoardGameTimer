@@ -7,14 +7,11 @@ int blueLed = 11;
 
 int totalPlayers = 4;
 float playerTimes[4] = {0, 0, 0, 0};
-int currentPlayer = 0;
-
-int resumeOnPlayer = currentPlayer;
+int currentPlayer;
 
 bool paused = true;
 bool timing = false;
 
-int lastPassingSensorValue = 1000;
 int maxLight = 0;
 
 int * currentPlayerColor;
@@ -28,11 +25,13 @@ void setupOutputs() {
 
 void setup() {
   Serial.begin(9600);
+  
   setupOutputs();
 
   calibrateLightSensor();
-  currentPlayerColor = getColorsForPlayer(currentPlayer);
 
+  setRandomStartPlayer();
+  
   Serial.println("STARTING...");
 }
 
@@ -46,7 +45,6 @@ void loop() {
     if (!timing) {
       timingSeq();
     }
-    
   } else if (brightness > maxLight * 0.95) {
     //    faceup | pause
     pausedSeq();
@@ -55,9 +53,6 @@ void loop() {
     passingSeq();
   }
 
-
-
-  lastPassingSensorValue = getBrightness();
   Serial.print("current: ");
   Serial.print(getBrightness());
   Serial.print(" max: ");
@@ -68,7 +63,6 @@ void timingSeq() {
   Serial.print("Timing ");
    
   if (!paused) {
-    Serial.println("| New Player");
     nextPlayer(); 
   }
 
@@ -92,4 +86,5 @@ void pausedSeq() {
   Serial.println("Paused");
   flashPlayerColor(currentPlayerColor, 250);
 }
+
 
