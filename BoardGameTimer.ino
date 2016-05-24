@@ -1,11 +1,10 @@
 #include "Player.h"
+#include "RgbLed.h"
 
 int ledPin = 13;
 int sensorPin = A0;
 
-int greenLed = 9;
-int redLed = 10;
-int blueLed = 11;
+RgbLed *rgb = new RgbLed(10, 9, 11);
 
 int totalPlayers = 4;
 float playerTimes[4] = {0, 0, 0, 0};
@@ -18,18 +17,8 @@ int maxLight = 0;
 
 int * currentPlayerColor;
 
-void setupOutputs() {
-  pinMode(ledPin, OUTPUT);
-  pinMode(redLed, OUTPUT);
-  pinMode(greenLed, OUTPUT);
-  pinMode(blueLed, OUTPUT);
-}
-
 void setup() {
   Serial.begin(9600);
-  
-  setupOutputs();
-
   calibrateLightSensor();
 
   setRandomStartPlayer();
@@ -77,7 +66,7 @@ void timingSeq() {
 }
 
 void passingSeq() {
-  rgbOff();
+  rgb -> off();
   Serial.println("Passing");
   timing = false;
 }

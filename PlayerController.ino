@@ -21,11 +21,11 @@ int * getColorsForPlayer(int playerNum){
 }
 
 void lightPlayerColor(int *pc){
-  rgbOn(pc[0], pc[1], pc[2]);
+  rgb -> on(pc[0], pc[1], pc[2]);
 }
 
 void flashPlayerColor(int *pc, int duration){
-  rgbFlash(pc[0], pc[1], pc[2], duration);
+  rgb -> flash(pc[0], pc[1], pc[2], duration);
 }
 
 void nextPlayer(){
