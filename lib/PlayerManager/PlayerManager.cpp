@@ -1,5 +1,4 @@
 #include "PlayerManager.h"
-#include <Arduino.h>
 
 PlayerManager::PlayerManager(){
   _totalPlayersPointer = 0;
@@ -17,8 +16,6 @@ int PlayerManager::getCurrentPlayerNum(){
 void PlayerManager::addPlayer(Player* player) {
   *_players[_totalPlayersPointer] = *player;
   _totalPlayersPointer++;
-  Serial.print("Total Players: ");
-  Serial.println(_totalPlayersPointer);
 }
 
 void PlayerManager::nextPlayer(){

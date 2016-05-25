@@ -1,15 +1,14 @@
 #include <Arduino.h>
-
 #include <Player.h>
 #include <RgbLed.h>
 #include <PlayerManager.h>
 
-int sensorPin = A0;
-int maxLight = 0;
+const int sensorPin = A0;
 
 RgbLed *rgb = new RgbLed(10, 9, 11);
-
 PlayerManager *playerManager = new PlayerManager();
+
+int maxLight = 0;
 
 bool paused = true;
 bool timing = false;
@@ -19,8 +18,10 @@ void timingSeq() {
     playerManager -> nextPlayer();
   }
     //    resume timer
-  Serial.print("Current Player: ");
-  Serial.println(playerManager -> getCurrentPlayerNum());
+  // Serial.print("Current Player: ");
+  // Serial.print(playerManager -> getCurrentPlayer().getName());
+  // Serial.print(" | ");
+  // Serial.println(playerManager -> getCurrentPlayerNum());
 
   lightPlayerColor(playerManager -> getCurrentPlayer().getColor());
   paused = false;
@@ -52,7 +53,6 @@ int getBrightness(){
 }
 
 void calibrateLightSensor() {
-  Serial.println("calibrating/bright");
   while(millis() < 3000){
     rgb -> flash(0,0,255,20);
     maxLight = analogRead(sensorPin);
@@ -62,36 +62,34 @@ void calibrateLightSensor() {
 void setup() {
   Serial.begin(9600);
 
-  playerManager -> addPlayer(new Player(0,255,0));
-  playerManager -> addPlayer(new Player(255,0,0));
-  playerManager -> addPlayer(new Player(0,0,255));
-  playerManager -> addPlayer(new Player(255,165,0));
+  playerManager -> addPlayer(new Player(0,255,0, "Green"));
+  playerManager -> addPlayer(new Player(255,0,0, "Red"));
+  playerManager -> addPlayer(new Player(0,0,255, "Blue"));
+  playerManager -> addPlayer(new Player(255,165,0, "Orange"));
 
   calibrateLightSensor();
 
-  Serial.println("STARTING...");
+  // Serial.println("STARTING...");
+  // Serial.print("Current Player: ");
+  // Serial.print(playerManager -> getCurrentPlayer().getName());
+  // Serial.print(" | ");
+  // Serial.println(playerManager -> getCurrentPlayerNum());
 }
 
 void loop() {
   // minLight ---timing---|----passing----|---paused---maxLight
 
-  if (getBrightness() < maxLight * 0.05) {
+  if (getBrightness() < maxLight * 0.10) {
     if (!timing) {
-      Serial.print("Timing ");
       timingSeq();
     }
 
   } else if (getBrightness() > maxLight * 0.95) {
-    // Serial.println("Paused");
     pausedSeq();
 
   } else if (!paused) {
     passingSeq();
   }
-  delay(10);
 
-  // Serial.print("current: ");
-  // Serial.print(getBrightness());
-  // Serial.print(" max: ");
-  // Serial.println(maxLight);
+  delay(50); //Runs too fast without Serial printing
 }
