@@ -38,28 +38,16 @@ void timingSeq() {
   Player currentPlayer = playerManager -> getCurrentPlayer();
 
   if (!paused) {
+    // ------------ Finish Last Player's Turn
     long turnMillis = timer -> getElapsedTime();
     currentPlayer.addToTotalTime(turnMillis);
     currentPlayer.increaseTotalTurns();
     playerManager -> updateCurrentPlayer(currentPlayer);
 
-    Serial.print("END Player: ");
-    Serial.println(currentPlayer.getName());
-    Serial.print("Turn took: ");
-    Serial.println(turnMillis);
-
-    Serial.print(playerManager -> getPlayer(0).getTotalTime());
-    Serial.print(" (");
-    Serial.print(playerManager -> getPlayer(0).getTotalTurns());
-    Serial.println(")");
-
-// -----------New Players Turn Starts--------------------
+    // ----------- Start New Players Turn
     playerManager -> nextPlayer();
     timer -> markTurnStart();
     currentPlayer = playerManager -> getCurrentPlayer();
-    
-    Serial.print("START Player: ");
-    Serial.println(currentPlayer.getName());
   }
 
   lightPlayerColor(playerManager -> getCurrentPlayer().getColor());
@@ -78,6 +66,27 @@ void pausedSeq() {
   timing = false;
 
   flashPlayerColor(playerManager -> getCurrentPlayer().getColor(), 250);
+
+  Serial.println("  Green  |   Red    |   Blue   |   Orange");
+  Serial.print(playerManager -> getPlayer(0).getTotalTime());
+  Serial.print(" (");
+  Serial.print(playerManager -> getPlayer(0).getTotalTurns());
+  Serial.print(") | ");
+
+  Serial.print(playerManager -> getPlayer(1).getTotalTime());
+  Serial.print(" (");
+  Serial.print(playerManager -> getPlayer(1).getTotalTurns());
+  Serial.print(") | ");
+
+  Serial.print(playerManager -> getPlayer(2).getTotalTime());
+  Serial.print(" (");
+  Serial.print(playerManager -> getPlayer(2).getTotalTurns());
+  Serial.print(") | ");
+
+  Serial.print(playerManager -> getPlayer(3).getTotalTime());
+  Serial.print(" (");
+  Serial.print(playerManager -> getPlayer(3).getTotalTurns());
+  Serial.println(")");
 }
 
 bool runOnce = true;

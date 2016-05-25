@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "Player.h"
 
 Player::Player(int r, int g, int b, char * playerName) {
@@ -26,11 +25,6 @@ void Player::increaseTotalTurns(){
 
 void Player::addToTotalTime(long millis){
   totalTime += millis;
-
-  Serial.print("Millis: ");
-  Serial.print(millis);
-  Serial.print(" | Total Time: ");
-  Serial.println(totalTime);
 }
 
 int * Player::getColor(){
