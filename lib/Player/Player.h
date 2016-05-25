@@ -8,11 +8,14 @@ class Player {
     void increaseTotalTurns();
     void addToTotalTime(long millis);
     char * getName();
+    long getTotalTime();
+    long getTotalTurns();
+
   private:
     int color[3];
-    char * name;
     long totalTime;
     int totalTurns;
+    char * name;
 };
 
 #endif

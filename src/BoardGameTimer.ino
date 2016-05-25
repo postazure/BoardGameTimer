@@ -35,25 +35,33 @@ void flashPlayerColor(int *pc, int duration){
 }
 
 void timingSeq() {
+  Player currentPlayer = playerManager -> getCurrentPlayer();
+
   if (!paused) {
     long turnMillis = timer -> getElapsedTime();
-    playerManager -> getCurrentPlayer().addToTotalTime(turnMillis);
+    currentPlayer.addToTotalTime(turnMillis);
+    currentPlayer.increaseTotalTurns();
+    playerManager -> updateCurrentPlayer(currentPlayer);
 
     Serial.print("END Player: ");
-    Serial.print(playerManager -> getCurrentPlayer().getName());
-    Serial.print(" | ");
+    Serial.println(currentPlayer.getName());
+    Serial.print("Turn took: ");
     Serial.println(turnMillis);
 
+    Serial.print(playerManager -> getPlayer(0).getTotalTime());
+    Serial.print(" (");
+    Serial.print(playerManager -> getPlayer(0).getTotalTurns());
+    Serial.println(")");
+
+// -----------New Players Turn Starts--------------------
     playerManager -> nextPlayer();
-
-    playerManager -> getCurrentPlayer().increaseTotalTurns();
     timer -> markTurnStart();
-
+    currentPlayer = playerManager -> getCurrentPlayer();
+    
     Serial.print("START Player: ");
-    Serial.println(playerManager -> getCurrentPlayer().getName());
+    Serial.println(currentPlayer.getName());
   }
 
-  Player currentPlayer = playerManager -> getCurrentPlayer();
   lightPlayerColor(playerManager -> getCurrentPlayer().getColor());
   paused = false;
   timing = true;
@@ -74,8 +82,7 @@ void pausedSeq() {
 
 bool runOnce = true;
 void setup() {
-  Serial.begin(9600);
-
+  Serial.begin(19200);
   playerManager -> addPlayer(new Player(0,255,0, "Green"));
   playerManager -> addPlayer(new Player(255,0,0, "Red"));
   playerManager -> addPlayer(new Player(0,0,255, "Blue"));

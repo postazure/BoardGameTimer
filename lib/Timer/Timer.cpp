@@ -1,6 +1,13 @@
 #include "Timer.h"
 #include <Arduino.h>
 
+Timer::Timer(){
+  lastPause = 0;
+  turnStart = 0;
+  turnEnd = 0;
+  nonCountableMillis = 0;
+}
+
 long Timer::getElapsedTime(){
   long total = (turnEnd - turnStart);
 

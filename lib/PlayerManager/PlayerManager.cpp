@@ -14,7 +14,7 @@ int PlayerManager::getCurrentPlayerNum(){
 }
 
 void PlayerManager::addPlayer(Player* player) {
-  *_players[_totalPlayersPointer] = *player;
+  _players[_totalPlayersPointer] = player;
   _totalPlayersPointer++;
 }
 
@@ -25,6 +25,14 @@ void PlayerManager::nextPlayer(){
   }
 }
 
+Player PlayerManager::getPlayer(int index){
+  return *_players[index];
+}
+
 Player PlayerManager::getCurrentPlayer(){
-  return *_players[_currentPlayerNum];
+  return getPlayer(_currentPlayerNum);
+}
+
+void PlayerManager::updateCurrentPlayer(Player player){
+  *_players[_currentPlayerNum] = player;
 }

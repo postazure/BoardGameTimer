@@ -6,14 +6,16 @@
 class PlayerManager {
   public:
     PlayerManager();
-    void addPlayer(Player* player);
+    void addPlayer(Player *player);
     int getPlayerCount();
     void nextPlayer();
     Player getCurrentPlayer();
     int getCurrentPlayerNum();
+    Player getPlayer(int index);
+    void updateCurrentPlayer(Player player);
 
   private:
-    Player *_players[10];
+    Player *_players[4];
     int _currentPlayerNum;
     int _totalPlayersPointer;
 };

@@ -3,6 +3,7 @@
 
 class Timer {
   public:
+    Timer();
     long getElapsedTime();
     void markPauseIfUnpaused();
     void markResumeIfPaused();
