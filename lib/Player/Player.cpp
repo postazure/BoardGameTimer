@@ -6,3 +6,6 @@ Player::Player(int r, int g, int b) {
   color[2] = b;
 }
 
+int * Player::getColor(){
+  return color;
+}

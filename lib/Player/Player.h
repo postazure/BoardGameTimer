@@ -4,9 +4,11 @@
 class Player {
   public:
     Player(int r, int g, int b);
-    int color[3];
+    int * getColor();
     int totalTurns;
     long totalTime;
+  private:
+    int color[3];
 };
 
 #endif
