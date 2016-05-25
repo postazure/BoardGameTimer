@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Timer.h>
 #include <Player.h>
 #include <RgbLed.h>
 #include <PlayerManager.h>
@@ -6,6 +7,7 @@
 const int sensorPin = A0;
 
 RgbLed *rgb = new RgbLed(10, 9, 11);
+Timer *timer = new Timer();
 PlayerManager *playerManager = new PlayerManager();
 
 int maxLight = 0;
@@ -34,16 +36,23 @@ void flashPlayerColor(int *pc, int duration){
 
 void timingSeq() {
   if (!paused) {
+    long turnMillis = timer -> getElapsedTime();
+    playerManager -> getCurrentPlayer().addToTotalTime(turnMillis);
+
+    Serial.print("END Player: ");
+    Serial.print(playerManager -> getCurrentPlayer().getName());
+    Serial.print(" | ");
+    Serial.println(turnMillis);
+
     playerManager -> nextPlayer();
+
     playerManager -> getCurrentPlayer().increaseTotalTurns();
+    timer -> markTurnStart();
+
+    Serial.print("START Player: ");
+    Serial.println(playerManager -> getCurrentPlayer().getName());
   }
 
-
-    //    resume timer
-  // Serial.print("Current Player: ");
-  // Serial.print(playerManager -> getCurrentPlayer().getName());
-  // Serial.print(" | ");
-  // Serial.println(playerManager -> getCurrentPlayerNum());
   Player currentPlayer = playerManager -> getCurrentPlayer();
   lightPlayerColor(playerManager -> getCurrentPlayer().getColor());
   paused = false;
@@ -56,12 +65,14 @@ void passingSeq() {
 }
 
 void pausedSeq() {
+  timer -> markPauseIfUnpaused();
   paused = true;
   timing = false;
 
   flashPlayerColor(playerManager -> getCurrentPlayer().getColor(), 250);
 }
 
+bool runOnce = true;
 void setup() {
   Serial.begin(9600);
 
@@ -72,20 +83,25 @@ void setup() {
 
   calibrateLightSensor();
 
-  // Serial.println("STARTING...");
-  // Serial.print("Current Player: ");
-  // Serial.print(playerManager -> getCurrentPlayer().getName());
-  // Serial.print(" | ");
-  // Serial.println(playerManager -> getCurrentPlayerNum());
+  Serial.println("STARTING...");
 }
 
 void loop() {
   // minLight ---timing---|----passing----|---paused---maxLight
 
   if (getBrightness() < maxLight * 0.10) {
+    if (runOnce) {
+      runOnce = false;
+      //reset counter when play starts for the first time.
+      timer -> getElapsedTime();
+      timer -> markTurnStart();
+    }
+
     if (!timing) {
+      timer -> markResumeIfPaused();
       timingSeq();
     }
+    timer -> markTurnEnd();
 
   } else if (getBrightness() > maxLight * 0.95) {
     pausedSeq();
