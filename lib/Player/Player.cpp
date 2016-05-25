@@ -7,6 +7,14 @@ Player::Player(int r, int g, int b, char * playerName) {
   name = playerName;
 }
 
+void Player::increaseTotalTurns(){
+  totalTurns++;
+}
+
+void Player::addToTotalTime(long millis){
+  totalTime += millis;
+}
+
 int * Player::getColor(){
   return color;
 }

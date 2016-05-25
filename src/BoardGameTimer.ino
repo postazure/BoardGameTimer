@@ -13,16 +13,38 @@ int maxLight = 0;
 bool paused = true;
 bool timing = false;
 
+void calibrateLightSensor() {
+  while(millis() < 3000){
+    rgb -> flash(0,0,255,20);
+    maxLight = analogRead(sensorPin);
+  }
+}
+
+int getBrightness(){
+  return analogRead(sensorPin);
+}
+
+void lightPlayerColor(int *pc){
+  rgb -> on(pc[0], pc[1], pc[2]);
+}
+
+void flashPlayerColor(int *pc, int duration){
+  rgb -> flash(pc[0], pc[1], pc[2], duration);
+}
+
 void timingSeq() {
   if (!paused) {
     playerManager -> nextPlayer();
+    playerManager -> getCurrentPlayer().increaseTotalTurns();
   }
+
+
     //    resume timer
   // Serial.print("Current Player: ");
   // Serial.print(playerManager -> getCurrentPlayer().getName());
   // Serial.print(" | ");
   // Serial.println(playerManager -> getCurrentPlayerNum());
-
+  Player currentPlayer = playerManager -> getCurrentPlayer();
   lightPlayerColor(playerManager -> getCurrentPlayer().getColor());
   paused = false;
   timing = true;
@@ -38,25 +60,6 @@ void pausedSeq() {
   timing = false;
 
   flashPlayerColor(playerManager -> getCurrentPlayer().getColor(), 250);
-}
-
-void lightPlayerColor(int *pc){
-  rgb -> on(pc[0], pc[1], pc[2]);
-}
-
-void flashPlayerColor(int *pc, int duration){
-  rgb -> flash(pc[0], pc[1], pc[2], duration);
-}
-
-int getBrightness(){
-  return analogRead(sensorPin);
-}
-
-void calibrateLightSensor() {
-  while(millis() < 3000){
-    rgb -> flash(0,0,255,20);
-    maxLight = analogRead(sensorPin);
-  }
 }
 
 void setup() {
