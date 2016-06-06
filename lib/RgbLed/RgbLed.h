@@ -3,15 +3,15 @@
 
 class RgbLed {
   public:
-    RgbLed(int redPin, int greenPin, int bluePin);
-    void on(int r, int g, int b);
+    RgbLed(unsigned char redPin, unsigned char greenPin, unsigned char bluePin);
+    void on(unsigned char r, unsigned char g, unsigned char b);
     void off();
-    void flash(int r, int g, int b, int duration);
+    void flash(unsigned char r, unsigned char g, unsigned char b, int duration);
 
   private:
-    int _redPin;
-    int _greenPin;
-    int _bluePin;
+    unsigned char _redPin;
+    unsigned char _greenPin;
+    unsigned char _bluePin;
 };
 
 #endif

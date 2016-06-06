@@ -3,11 +3,11 @@
 
 class Player {
   public:
-    Player(int r, int g, int b, int playerId);
-    int color[3];
+    Player(unsigned char r, unsigned char g, unsigned char b, unsigned char playerId);
+    unsigned char color[3];
     long totalTime;
     int totalTurns;
-    int id;
+    unsigned char id;
 };
 
 #endif

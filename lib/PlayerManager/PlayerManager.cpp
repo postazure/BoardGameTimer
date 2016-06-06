@@ -5,11 +5,11 @@ PlayerManager::PlayerManager(){
   _currentPlayerNum = 0;
 }
 
-int PlayerManager::getPlayerCount(){
+unsigned char PlayerManager::getPlayerCount(){
   return _totalPlayersPointer;
 }
 
-int PlayerManager::getCurrentPlayerNum(){
+unsigned char PlayerManager::getCurrentPlayerNum(){
   return _currentPlayerNum;
 }
 
@@ -25,7 +25,7 @@ void PlayerManager::nextPlayer(){
   }
 }
 
-Player PlayerManager::getPlayer(int index){
+Player PlayerManager::getPlayer(unsigned char index){
   return *_players[index];
 }
 

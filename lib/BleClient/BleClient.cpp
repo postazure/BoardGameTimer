@@ -2,7 +2,7 @@
 #include <SoftwareSerial.h>
 #include <Arduino.h>
 
-BleClient::BleClient(int RX, int TX) : btSerial(SoftwareSerial(RX, TX)){
+BleClient::BleClient(unsigned char RX, unsigned char TX) : btSerial(SoftwareSerial(RX, TX)){
   pinMode(RX, INPUT);
   pinMode(TX, OUTPUT);
   btSerial.begin(9600);

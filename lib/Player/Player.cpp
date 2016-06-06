@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(int r, int g, int b, int playerId) {
+Player::Player(unsigned char r, unsigned char g, unsigned char b, unsigned char playerId) {
   color[0] = r;
   color[1] = g;
   color[2] = b;

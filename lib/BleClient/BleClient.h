@@ -5,7 +5,7 @@
 
 class BleClient {
   public:
-    BleClient(int RX, int TX);
+    BleClient(unsigned char RX, unsigned char TX);
     void write(String msg);
     String read();
 

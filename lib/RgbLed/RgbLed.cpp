@@ -1,7 +1,7 @@
 #include "RgbLed.h"
 #include "Arduino.h"
 
-RgbLed::RgbLed(int redPin, int greenPin, int bluePin){
+RgbLed::RgbLed(unsigned char redPin, unsigned char greenPin, unsigned char bluePin){
   _redPin = redPin;
   _greenPin = greenPin;
   _bluePin = bluePin;
@@ -11,7 +11,7 @@ RgbLed::RgbLed(int redPin, int greenPin, int bluePin){
   pinMode(_bluePin, OUTPUT);
 }
 
-void RgbLed::on(int r, int g, int b){
+void RgbLed::on(unsigned char r, unsigned char g, unsigned char b){
   digitalWrite(_redPin, r);
   digitalWrite(_greenPin, g);
   digitalWrite(_bluePin, b);
@@ -23,7 +23,7 @@ void RgbLed::off(){
   digitalWrite(_bluePin, 0);
 }
 
-void RgbLed::flash(int r, int g, int b, int duration){
+void RgbLed::flash(unsigned char r, unsigned char g, unsigned char b, int duration){
   on(r, g, b);
   delay(duration);
   off();

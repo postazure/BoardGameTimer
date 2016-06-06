@@ -7,17 +7,17 @@ class PlayerManager {
   public:
     PlayerManager();
     void addPlayer(Player *player);
-    int getPlayerCount();
+    unsigned char getPlayerCount();
     void nextPlayer();
     Player getCurrentPlayer();
-    int getCurrentPlayerNum();
-    Player getPlayer(int index);
+    unsigned char getCurrentPlayerNum();
+    Player getPlayer(unsigned char index);
     void updateCurrentPlayer(Player player);
 
   private:
     Player *_players[4];
-    int _currentPlayerNum;
-    int _totalPlayersPointer;
+    unsigned char _currentPlayerNum;
+    unsigned char _totalPlayersPointer;
 };
 
 #endif

@@ -29,11 +29,11 @@ int getBrightness(){
   return analogRead(sensorPin);
 }
 
-void lightPlayerColor(int *pc){
+void lightPlayerColor(byte *pc){
   rgb -> on(pc[0], pc[1], pc[2]);
 }
 
-void flashPlayerColor(int *pc, int duration){
+void flashPlayerColor(byte *pc, byte duration){
   rgb -> flash(pc[0], pc[1], pc[2], duration);
 }
 
@@ -87,11 +87,11 @@ void initGame(){
     info = bleSerial.read();
   } while(info == "");
 
-  for (int i = 0; i < info.length(); i+=11){  //String Length of player info
-    int id = info.substring(i, i + 2).toInt();
-    int r = info.substring(i + 2, i + 5).toInt();
-    int g = info.substring(i + 5, i + 8).toInt();
-    int b = info.substring(i + 8, i + 11).toInt();
+  for (byte i = 0; i < info.length(); i+=11){  //String Length of player info
+    byte id = info.substring(i, i + 2).toInt();
+    byte r = info.substring(i + 2, i + 5).toInt();
+    byte g = info.substring(i + 5, i + 8).toInt();
+    byte b = info.substring(i + 8, i + 11).toInt();
     playerManager -> addPlayer(new Player(r, g, b, id));
   }
 }
