@@ -3,19 +3,11 @@
 
 class Player {
   public:
-    Player(int r, int g, int b, char * playerName);
-    int * getColor();
-    void increaseTotalTurns();
-    void addToTotalTime(long millis);
-    char * getName();
-    long getTotalTime();
-    long getTotalTurns();
-
-  private:
+    Player(int r, int g, int b, int playerId);
     int color[3];
     long totalTime;
     int totalTurns;
-    char * name;
+    int id;
 };
 
 #endif

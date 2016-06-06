@@ -3,10 +3,13 @@
 #include <Player.h>
 #include <RgbLed.h>
 #include <PlayerManager.h>
+#include <BleClient.h>
 
 const int sensorPin = A0;
 
-RgbLed *rgb = new RgbLed(10, 9, 11);
+BleClient bleSerial(2, 3);
+
+RgbLed *rgb = new RgbLed(7, 6, 8);
 Timer *timer = new Timer();
 PlayerManager *playerManager = new PlayerManager();
 
@@ -18,7 +21,7 @@ bool timing = false;
 void calibrateLightSensor() {
   while(millis() < 3000){
     rgb -> flash(0,0,255,20);
-    maxLight = analogRead(sensorPin);
+    maxLight = getBrightness();
   }
 }
 
@@ -40,9 +43,12 @@ void timingSeq() {
   if (!paused) {
     // ------------ Finish Last Player's Turn
     long turnMillis = timer -> getElapsedTime();
-    currentPlayer.addToTotalTime(turnMillis);
-    currentPlayer.increaseTotalTurns();
+    currentPlayer.totalTime += turnMillis;
+    currentPlayer.totalTurns++;
     playerManager -> updateCurrentPlayer(currentPlayer);
+
+    // ----------- Send Status Report
+    sendPlayerTimes();
 
     // ----------- Start New Players Turn
     playerManager -> nextPlayer();
@@ -50,7 +56,7 @@ void timingSeq() {
     currentPlayer = playerManager -> getCurrentPlayer();
   }
 
-  lightPlayerColor(playerManager -> getCurrentPlayer().getColor());
+  lightPlayerColor(playerManager -> getCurrentPlayer().color);
   paused = false;
   timing = true;
 }
@@ -65,41 +71,55 @@ void pausedSeq() {
   paused = true;
   timing = false;
 
-  flashPlayerColor(playerManager -> getCurrentPlayer().getColor(), 250);
+  flashPlayerColor(playerManager -> getCurrentPlayer().color, 250);
+}
 
-  Serial.println("  Green  |   Red    |   Blue   |   Orange");
-  Serial.print(playerManager -> getPlayer(0).getTotalTime());
-  Serial.print(" (");
-  Serial.print(playerManager -> getPlayer(0).getTotalTurns());
-  Serial.print(") | ");
+void sendPlayerTimes(){
+  String status = "";
 
-  Serial.print(playerManager -> getPlayer(1).getTotalTime());
-  Serial.print(" (");
-  Serial.print(playerManager -> getPlayer(1).getTotalTurns());
-  Serial.print(") | ");
+  int playerCount = playerManager -> getPlayerCount();
+  for (int i = 0; i < playerCount; i++){
+    Player player = playerManager -> getPlayer(i);
+    status += player.id;
+    status += ",";
+    status += player.totalTurns;
+    status += ",";
+    status += player.totalTime;
+    if (playerCount != i+1){
+      status += ":";
+    }
+  }
+  bleSerial.write(status);
+}
 
-  Serial.print(playerManager -> getPlayer(2).getTotalTime());
-  Serial.print(" (");
-  Serial.print(playerManager -> getPlayer(2).getTotalTurns());
-  Serial.print(") | ");
+void initGame(){
+  // Get all players and add them to player manager
+  String info = "";
+  rgb -> on(0, 255, 0);
 
-  Serial.print(playerManager -> getPlayer(3).getTotalTime());
-  Serial.print(" (");
-  Serial.print(playerManager -> getPlayer(3).getTotalTurns());
-  Serial.println(")");
+  while(info.length() == 0){
+    info = bleSerial.read();
+  }
+
+  int playerCount = info.length() / 11; //String Length of player info
+
+  for (int i = 0; i < playerCount; i++){
+    playerManager -> addPlayer(new Player(
+      info.substring(i + 2, i + 5).toInt(),
+      info.substring(i + 5, i + 8).toInt(),
+      info.substring(i + 8, i + 11).toInt(),
+      info.substring(i, i + 2).toInt()
+    ));
+    rgb -> flash(0,0,255,20);
+  }
+
+  rgb -> off();
 }
 
 bool runOnce = true;
 void setup() {
-  Serial.begin(19200);
-  playerManager -> addPlayer(new Player(0,255,0, "Green"));
-  playerManager -> addPlayer(new Player(255,0,0, "Red"));
-  playerManager -> addPlayer(new Player(0,0,255, "Blue"));
-  playerManager -> addPlayer(new Player(255,165,0, "Orange"));
-
   calibrateLightSensor();
-
-  Serial.println("STARTING...");
+  initGame();
 }
 
 void loop() {
@@ -126,5 +146,5 @@ void loop() {
     passingSeq();
   }
 
-  delay(50); //Runs too fast without Serial printing
+  delay(50); //Runs too fast without serial printing
 }

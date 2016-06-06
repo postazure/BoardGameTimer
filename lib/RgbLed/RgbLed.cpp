@@ -5,10 +5,10 @@ RgbLed::RgbLed(int redPin, int greenPin, int bluePin){
   _redPin = redPin;
   _greenPin = greenPin;
   _bluePin = bluePin;
-  
+
   pinMode(_redPin, OUTPUT);
   pinMode(_greenPin, OUTPUT);
-  pinMode(_bluePin, OUTPUT); 
+  pinMode(_bluePin, OUTPUT);
 }
 
 void RgbLed::on(int r, int g, int b){
@@ -29,11 +29,3 @@ void RgbLed::flash(int r, int g, int b, int duration){
   off();
   delay(duration);
 }
-
-void RgbLed::flash(int r, int g, int b, int duration, int times){
-  for(int i = 0; i < times; i++){
-    flash(r, g, b, duration);
-  }
-}
-
-

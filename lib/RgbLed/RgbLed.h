@@ -7,8 +7,7 @@ class RgbLed {
     void on(int r, int g, int b);
     void off();
     void flash(int r, int g, int b, int duration);
-    void flash(int r, int g, int b, int duration, int times);
-    
+
   private:
     int _redPin;
     int _greenPin;

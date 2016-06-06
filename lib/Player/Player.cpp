@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(int r, int g, int b, char * playerName) {
+Player::Player(int r, int g, int b, int playerId) {
   color[0] = r;
   color[1] = g;
   color[2] = b;
@@ -8,29 +8,5 @@ Player::Player(int r, int g, int b, char * playerName) {
   totalTime = 0;
   totalTurns = 0;
 
-  name = playerName;
-}
-
-long Player::getTotalTime(){
-  return totalTime;
-}
-
-long Player::getTotalTurns(){
-  return totalTurns;
-}
-
-void Player::increaseTotalTurns(){
-  totalTurns++;
-}
-
-void Player::addToTotalTime(long millis){
-  totalTime += millis;
-}
-
-int * Player::getColor(){
-  return color;
-}
-
-char * Player::getName(){
-  return name;
+  id = playerId;
 }
