@@ -3,7 +3,9 @@
 #include <Arduino.h>
 
 BleClient::BleClient(int RX, int TX) : btSerial(SoftwareSerial(RX, TX)){
-    btSerial.begin(9600);
+  pinMode(RX, INPUT);
+  pinMode(TX, OUTPUT);
+  btSerial.begin(9600);
 }
 
 void BleClient::write(String msg){

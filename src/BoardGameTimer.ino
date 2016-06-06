@@ -7,7 +7,7 @@
 
 const int sensorPin = A0;
 
-BleClient bleSerial(2, 3);
+BleClient bleSerial(9, 10);
 
 RgbLed *rgb = new RgbLed(7, 6, 8);
 Timer *timer = new Timer();
@@ -37,6 +37,25 @@ void flashPlayerColor(int *pc, int duration){
   rgb -> flash(pc[0], pc[1], pc[2], duration);
 }
 
+void sendPlayerTimes(){
+  bleSerial.write(";");
+  String status = "";
+
+  int playerCount = playerManager -> getPlayerCount();
+  for (int i = 0; i < playerCount; i++){
+    Player player = playerManager -> getPlayer(i);
+    status += player.id;
+    status += ",";
+    status += player.totalTurns;
+    status += ",";
+    status += player.totalTime;
+    if (playerCount != i+1){
+      status += ":";
+    }
+  }
+  bleSerial.write(status);
+}
+
 void timingSeq() {
   Player currentPlayer = playerManager -> getCurrentPlayer();
 
@@ -61,59 +80,22 @@ void timingSeq() {
   timing = true;
 }
 
-void passingSeq() {
-  rgb -> off();
-  timing = false;
-}
-
-void pausedSeq() {
-  timer -> markPauseIfUnpaused();
-  paused = true;
-  timing = false;
-
-  flashPlayerColor(playerManager -> getCurrentPlayer().color, 250);
-}
-
-void sendPlayerTimes(){
-  String status = "";
-
-  int playerCount = playerManager -> getPlayerCount();
-  for (int i = 0; i < playerCount; i++){
-    Player player = playerManager -> getPlayer(i);
-    status += player.id;
-    status += ",";
-    status += player.totalTurns;
-    status += ",";
-    status += player.totalTime;
-    if (playerCount != i+1){
-      status += ":";
-    }
-  }
-  bleSerial.write(status);
-}
-
 void initGame(){
   // Get all players and add them to player manager
   String info = "";
   rgb -> on(0, 255, 0);
 
-  while(info.length() == 0){
+  do {
     info = bleSerial.read();
+  } while(info == "");
+
+  for (int i = 0; i < info.length(); i+=11){  //String Length of player info
+    int id = info.substring(i, i + 2).toInt();
+    int r = info.substring(i + 2, i + 5).toInt();
+    int g = info.substring(i + 5, i + 8).toInt();
+    int b = info.substring(i + 8, i + 11).toInt();
+    playerManager -> addPlayer(new Player(r, g, b, id));
   }
-
-  int playerCount = info.length() / 11; //String Length of player info
-
-  for (int i = 0; i < playerCount; i++){
-    playerManager -> addPlayer(new Player(
-      info.substring(i + 2, i + 5).toInt(),
-      info.substring(i + 5, i + 8).toInt(),
-      info.substring(i + 8, i + 11).toInt(),
-      info.substring(i, i + 2).toInt()
-    ));
-    rgb -> flash(0,0,255,20);
-  }
-
-  rgb -> off();
 }
 
 bool runOnce = true;
@@ -140,10 +122,17 @@ void loop() {
     timer -> markTurnEnd();
 
   } else if (getBrightness() > maxLight * 0.95) {
-    pausedSeq();
+    //Paused
+    timer -> markPauseIfUnpaused();
+    paused = true;
+    timing = false;
+
+    flashPlayerColor(playerManager -> getCurrentPlayer().color, 250);
 
   } else if (!paused) {
-    passingSeq();
+    //Passing
+    rgb -> off();
+    timing = false;
   }
 
   delay(50); //Runs too fast without serial printing
