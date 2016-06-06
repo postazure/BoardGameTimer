@@ -38,7 +38,6 @@ void flashPlayerColor(int *pc, int duration){
 }
 
 void sendPlayerTimes(){
-  bleSerial.write(";");
   String status = "";
 
   int playerCount = playerManager -> getPlayerCount();
@@ -81,7 +80,6 @@ void timingSeq() {
 }
 
 void initGame(){
-  // Get all players and add them to player manager
   String info = "";
   rgb -> on(0, 255, 0);
 
