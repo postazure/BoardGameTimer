@@ -3,11 +3,13 @@
 #include <Player.h>
 #include <RgbLed.h>
 #include <PlayerManager.h>
-#include <BleClient.h>
+#include <SoftwareSerial.h>
 
 const int sensorPin = A0;
+const byte RX = 9;
+const byte TX = 10;
 
-BleClient bleSerial(9, 10);
+SoftwareSerial btSerial(RX, TX);
 
 RgbLed *rgb = new RgbLed(7, 6, 8);
 Timer *timer = new Timer();
@@ -52,7 +54,9 @@ void sendPlayerTimes(){
       status += ":";
     }
   }
-  bleSerial.write(status);
+
+  status += ";";
+  btSerial.write(status.c_str());
 }
 
 void timingSeq() {
@@ -80,24 +84,41 @@ void timingSeq() {
 }
 
 void initGame(){
-  String info = "";
   rgb -> on(0, 255, 0);
-
+  
+  boolean waitingForData = true;
+  byte playerInfo[4];
   do {
-    info = bleSerial.read();
-  } while(info == "");
+    while(btSerial.available()){
+      btSerial.readBytes(playerInfo, 4);
+      byte id = playerInfo[0];
+      byte r = playerInfo[1];
+      byte g = playerInfo[2];
+      byte b = playerInfo[3];
 
-  for (byte i = 0; i < info.length(); i+=11){  //String Length of player info
-    byte id = info.substring(i, i + 2).toInt();
-    byte r = info.substring(i + 2, i + 5).toInt();
-    byte g = info.substring(i + 5, i + 8).toInt();
-    byte b = info.substring(i + 8, i + 11).toInt();
-    playerManager -> addPlayer(new Player(r, g, b, id));
-  }
+      Serial.print(id);
+      Serial.print(" ");
+      Serial.print(r);
+      Serial.print(" ");
+      Serial.print(g);
+      Serial.print(" ");
+      Serial.println(b);
+
+      playerManager -> addPlayer(new Player(r, g, b, id));
+      delay(20);
+      waitingForData = false;
+    }
+  } while (waitingForData);
 }
 
 bool runOnce = true;
 void setup() {
+  pinMode(RX, INPUT);
+  pinMode(TX, OUTPUT);
+  btSerial.begin(9600);
+
+  Serial.begin(9600); //Debug
+
   calibrateLightSensor();
   initGame();
 }
