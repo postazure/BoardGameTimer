@@ -40,23 +40,21 @@ void flashPlayerColor(byte *pc, byte duration){
 }
 
 void sendPlayerTimes(){
-  String status = "";
+  byte playerCount = playerManager -> getPlayerCount();
 
-  int playerCount = playerManager -> getPlayerCount();
-  for (int i = 0; i < playerCount; i++){
+  for(byte i = 0; i < playerCount; i++){
     Player player = playerManager -> getPlayer(i);
-    status += player.id;
-    status += ",";
-    status += player.totalTurns;
-    status += ",";
-    status += player.totalTime;
-    if (playerCount != i+1){
-      status += ":";
+    btSerial.print(player.id);
+    btSerial.print(',');
+    btSerial.print(player.totalTurns);
+    btSerial.print(',');
+    btSerial.print(player.totalTime);
+
+    if (i < playerCount - 1){
+      btSerial.print(':');
     }
   }
-
-  status += ";";
-  btSerial.write(status.c_str());
+  btSerial.print(';');
 }
 
 void timingSeq() {
@@ -85,7 +83,7 @@ void timingSeq() {
 
 void initGame(){
   rgb -> on(0, 255, 0);
-  
+
   boolean waitingForData = true;
   byte playerInfo[4];
   do {
@@ -121,6 +119,7 @@ void setup() {
 
   calibrateLightSensor();
   initGame();
+  sendPlayerTimes();
 }
 
 void loop() {

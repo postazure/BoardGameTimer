@@ -15,7 +15,7 @@ class PlayerManager {
     void updateCurrentPlayer(Player player);
 
   private:
-    Player *_players[4];
+    Player *_players[8];
     unsigned char _currentPlayerNum;
     unsigned char _totalPlayersPointer;
 };
