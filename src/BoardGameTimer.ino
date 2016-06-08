@@ -94,14 +94,6 @@ void initGame(){
       byte g = playerInfo[2];
       byte b = playerInfo[3];
 
-      Serial.print(id);
-      Serial.print(" ");
-      Serial.print(r);
-      Serial.print(" ");
-      Serial.print(g);
-      Serial.print(" ");
-      Serial.println(b);
-
       playerManager -> addPlayer(new Player(r, g, b, id));
       delay(20);
       waitingForData = false;
@@ -114,8 +106,6 @@ void setup() {
   pinMode(RX, INPUT);
   pinMode(TX, OUTPUT);
   btSerial.begin(9600);
-
-  Serial.begin(9600); //Debug
 
   calibrateLightSensor();
   initGame();
